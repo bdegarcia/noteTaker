@@ -57,6 +57,7 @@ const handleNoteSave = function () {
   };
 
   saveNote(newNote).then(() => {
+    console.log('Are you there?')
     getAndRenderNotes();
     renderActiveNote();
   });

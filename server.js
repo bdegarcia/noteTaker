@@ -7,6 +7,7 @@ const notes = require(noteFile)
 const PORT = process.env.PORT || 8000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'))
 
 app.listen(PORT, function() {
     console.log("App listening on PORT: " + PORT);
@@ -26,14 +27,29 @@ app.get("/api/notes", function(req, res) {
 
 app.post("/api/notes", function(req, res) {
   const newNote = req.body;
+  console.log(newNote)
   newNote.id = parseInt(notes.length) + 1
-  fs.appendFile(noteFile, newNote, () => {
-    if (err) throw err;
-    res.json(notes)
-  });
+  fs.readFile(noteFile, 'utf-8', (err, data) => {
+    let currentNotes = JSON.parse(data)
+    currentNotes.push(newNote)
+    fs.writeFile(noteFile, JSON.stringify(currentNotes), err => {
+      if (err) throw err;
+      res.json(currentNotes)
+    });
+  })  
 })
 
 app.delete("/api/notes/:id", function(req, res) {
   const deleteId = req.params.id
   
 })
+
+function readDatabase(something){
+  fs.readFile(noteFile, 'utf-8', (err, data) => {
+    let newInfo = JSON.parse(data)
+    console.log(newInfo)
+  })
+
+}
+
+readDatabase()
